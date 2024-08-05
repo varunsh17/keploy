@@ -9,33 +9,34 @@ import (
 )
 
 type Config struct {
-	Path                  string       `json:"path" yaml:"path" mapstructure:"path"`
-	AppID                 uint64       `json:"appId" yaml:"appId" mapstructure:"appId"`
-	AppName               string       `json:"appName" yaml:"appName" mapstructure:"appName"`
-	Command               string       `json:"command" yaml:"command" mapstructure:"command"`
-	Port                  uint32       `json:"port" yaml:"port" mapstructure:"port"`
-	DNSPort               uint32       `json:"dnsPort" yaml:"dnsPort" mapstructure:"dnsPort"`
-	ProxyPort             uint32       `json:"proxyPort" yaml:"proxyPort" mapstructure:"proxyPort"`
-	Debug                 bool         `json:"debug" yaml:"debug" mapstructure:"debug"`
-	DisableTele           bool         `json:"disableTele" yaml:"disableTele" mapstructure:"disableTele"`
-	DisableANSI           bool         `json:"disableANSI" yaml:"disableANSI" mapstructure:"disableANSI"`
-	InDocker              bool         `json:"inDocker" yaml:"-" mapstructure:"inDocker"`
-	ContainerName         string       `json:"containerName" yaml:"containerName" mapstructure:"containerName"`
-	NetworkName           string       `json:"networkName" yaml:"networkName" mapstructure:"networkName"`
-	BuildDelay            uint64       `json:"buildDelay" yaml:"buildDelay" mapstructure:"buildDelay"`
-	Test                  Test         `json:"test" yaml:"test" mapstructure:"test"`
-	Record                Record       `json:"record" yaml:"record" mapstructure:"record"`
-	Gen                   UtGen        `json:"gen" yaml:"-" mapstructure:"gen"`
-	Normalize             Normalize    `json:"normalize" yaml:"-" mapstructure:"normalize"`
-	ReRecord              ReRecord     `json:"rerecord" yaml:"-" mapstructure:"rerecord"`
-	ConfigPath            string       `json:"configPath" yaml:"configPath" mapstructure:"configPath"`
-	BypassRules           []BypassRule `json:"bypassRules" yaml:"bypassRules" mapstructure:"bypassRules"`
-	EnableTesting         bool         `json:"enableTesting" yaml:"-" mapstructure:"enableTesting"`
-	GenerateGithubActions bool         `json:"generateGithubActions" yaml:"generateGithubActions" mapstructure:"generateGithubActions"`
-	KeployContainer       string       `json:"keployContainer" yaml:"keployContainer" mapstructure:"keployContainer"`
-	KeployNetwork         string       `json:"keployNetwork" yaml:"keployNetwork" mapstructure:"keployNetwork"`
-	CommandType           string       `json:"cmdType" yaml:"cmdType" mapstructure:"cmdType"`
-	InCi                  bool         `json:"inCi" yaml:"inCi" mapstructure:"inCi"`
+	Envs                  map[string]string `json:"envs" yaml:"envs" mapstructure:"envs"`
+	Path                  string            `json:"path" yaml:"path" mapstructure:"path"`
+	AppID                 uint64            `json:"appId" yaml:"appId" mapstructure:"appId"`
+	AppName               string            `json:"appName" yaml:"appName" mapstructure:"appName"`
+	Command               string            `json:"command" yaml:"command" mapstructure:"command"`
+	Port                  uint32            `json:"port" yaml:"port" mapstructure:"port"`
+	DNSPort               uint32            `json:"dnsPort" yaml:"dnsPort" mapstructure:"dnsPort"`
+	ProxyPort             uint32            `json:"proxyPort" yaml:"proxyPort" mapstructure:"proxyPort"`
+	Debug                 bool              `json:"debug" yaml:"debug" mapstructure:"debug"`
+	DisableTele           bool              `json:"disableTele" yaml:"disableTele" mapstructure:"disableTele"`
+	DisableANSI           bool              `json:"disableANSI" yaml:"disableANSI" mapstructure:"disableANSI"`
+	InDocker              bool              `json:"inDocker" yaml:"-" mapstructure:"inDocker"`
+	ContainerName         string            `json:"containerName" yaml:"containerName" mapstructure:"containerName"`
+	NetworkName           string            `json:"networkName" yaml:"networkName" mapstructure:"networkName"`
+	BuildDelay            uint64            `json:"buildDelay" yaml:"buildDelay" mapstructure:"buildDelay"`
+	Test                  Test              `json:"test" yaml:"test" mapstructure:"test"`
+	Record                Record            `json:"record" yaml:"record" mapstructure:"record"`
+	Gen                   UtGen             `json:"gen" yaml:"-" mapstructure:"gen"`
+	Normalize             Normalize         `json:"normalize" yaml:"-" mapstructure:"normalize"`
+	ReRecord              ReRecord          `json:"rerecord" yaml:"-" mapstructure:"rerecord"`
+	ConfigPath            string            `json:"configPath" yaml:"configPath" mapstructure:"configPath"`
+	BypassRules           []BypassRule      `json:"bypassRules" yaml:"bypassRules" mapstructure:"bypassRules"`
+	EnableTesting         bool              `json:"enableTesting" yaml:"-" mapstructure:"enableTesting"`
+	GenerateGithubActions bool              `json:"generateGithubActions" yaml:"generateGithubActions" mapstructure:"generateGithubActions"`
+	KeployContainer       string            `json:"keployContainer" yaml:"keployContainer" mapstructure:"keployContainer"`
+	KeployNetwork         string            `json:"keployNetwork" yaml:"keployNetwork" mapstructure:"keployNetwork"`
+	CommandType           string            `json:"cmdType" yaml:"cmdType" mapstructure:"cmdType"`
+	InCi                  bool              `json:"inCi" yaml:"inCi" mapstructure:"inCi"`
 }
 
 type UtGen struct {
@@ -185,4 +186,12 @@ func SetSelectedTestsNormalize(conf *Config, value string) error {
 	}
 	conf.Normalize.SelectedTests = tests
 	return nil
+}
+
+func GenerateRecordEnvs(config Config) string {
+	var envs []string
+	for key, value := range config.Envs {
+		envs = append(envs, fmt.Sprintf("-e %s=%s", key, value))
+	}
+	return strings.Join(envs, " ")
 }

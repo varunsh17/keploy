@@ -28,6 +28,7 @@ type SetupOptions struct {
 	Container     string
 	DockerNetwork string
 	DockerDelay   uint64
+	Envs          map[string]string
 }
 
 type RunOptions struct {
